@@ -2,6 +2,8 @@ package com.sailing.moviebooking.service;
 
 import com.sailing.moviebooking.dto.request.UserCreationRequest;
 import com.sailing.moviebooking.dto.request.UserUpdateRequest;
+import com.sailing.moviebooking.exception.AppException;
+import com.sailing.moviebooking.exception.ErrorCode;
 import com.sailing.moviebooking.model.User;
 import com.sailing.moviebooking.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +19,7 @@ public class UserService {
     public User createUser(UserCreationRequest userCreationRequest) {
         User user = new User();
         if (userRepository.existsByUsername(userCreationRequest.getUsername())) {
-            throw new RuntimeException("User existed.");
+            throw new AppException(ErrorCode.USER_EXISTED);
         }
         user.setUsername(userCreationRequest.getUsername());
         user.setPassword(userCreationRequest.getPassword());
