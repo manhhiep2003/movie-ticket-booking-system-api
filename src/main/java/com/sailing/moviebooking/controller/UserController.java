@@ -3,19 +3,24 @@ package com.sailing.moviebooking.controller;
 import com.sailing.moviebooking.dto.request.UserCreationRequest;
 import com.sailing.moviebooking.dto.request.UserUpdateRequest;
 import com.sailing.moviebooking.dto.response.ApiResponse;
+import com.sailing.moviebooking.dto.response.UserResponse;
 import com.sailing.moviebooking.model.User;
 import com.sailing.moviebooking.service.UserService;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UserController {
-    @Autowired
-    private UserService userService;
+
+    UserService userService;
 
     @PostMapping
     ApiResponse<User> createUser(@RequestBody @Valid UserCreationRequest userCreationRequest) {
@@ -30,12 +35,12 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    User getUserById(@PathVariable("userId") String userId) {
+    UserResponse getUserById(@PathVariable("userId") String userId) {
         return userService.getUserById(userId);
     }
 
     @PutMapping("/{userId}")
-    User updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
+    UserResponse updateUser(@RequestBody UserUpdateRequest userUpdateRequest,
                     @PathVariable("userId") String userId) {
         return userService.updateUser(userUpdateRequest, userId);
     }
