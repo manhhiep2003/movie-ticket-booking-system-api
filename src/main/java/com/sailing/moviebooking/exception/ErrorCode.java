@@ -5,7 +5,8 @@ public enum ErrorCode {
     USER_EXISTED(1001, "User existed."),
     INVALID_USERNAME(1002,"Username must be at least 5 characters."),
     INVALID_PASSWORD(1003, "Password must be at least 8 characters."),
-    INVALID_ERROR_KEY(1004, "Invalid message key.")
+    INVALID_ERROR_KEY(1004, "Invalid message key."),
+    USER_NOT_EXIST(1005, "User does not exist.")
     ;
 
     private int code;
