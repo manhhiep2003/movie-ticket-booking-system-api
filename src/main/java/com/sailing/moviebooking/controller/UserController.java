@@ -4,6 +4,7 @@ import com.sailing.moviebooking.dto.request.UserCreationRequest;
 import com.sailing.moviebooking.dto.request.UserUpdateRequest;
 import com.sailing.moviebooking.model.User;
 import com.sailing.moviebooking.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +17,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping
-    User createUser(@RequestBody UserCreationRequest userCreationRequest) {
+    User createUser(@RequestBody @Valid UserCreationRequest userCreationRequest) {
         return userService.createUser(userCreationRequest);
     }
 
