@@ -1,8 +1,11 @@
 package com.sailing.moviebooking.controller;
 
+import com.nimbusds.jose.JOSEException;
 import com.sailing.moviebooking.dto.request.AuthenticationRequest;
+import com.sailing.moviebooking.dto.request.IntrospectRequest;
 import com.sailing.moviebooking.dto.response.ApiResponse;
 import com.sailing.moviebooking.dto.response.AuthenticationResponse;
+import com.sailing.moviebooking.dto.response.IntrospectResponse;
 import com.sailing.moviebooking.service.AuthenticationService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +14,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.ParseException;
 
 @RestController
 @RequestMapping("/auth")
@@ -22,11 +27,18 @@ public class AuthenticationController {
 
     @PostMapping("/login")
     ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
-        boolean result = authenticationService.authenticate(authenticationRequest);
+        var result = authenticationService.authenticate(authenticationRequest);
         return ApiResponse.<AuthenticationResponse>builder()
-                .result(AuthenticationResponse.builder()
-                        .authenticated(result)
-                        .build())
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/introspect")
+    ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest introspectRequest)
+            throws ParseException, JOSEException {
+        var result = authenticationService.introspect(introspectRequest);
+        return ApiResponse.<IntrospectResponse>builder()
+                .result(result)
                 .build();
     }
 }
