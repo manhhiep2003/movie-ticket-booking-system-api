@@ -12,6 +12,9 @@ import com.sailing.moviebooking.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -39,11 +42,13 @@ public class UserService {
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
         return userMapper.toUserResponse(users);
     }
 
+    @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUserById(String userId) {
         return userMapper.toUserResponse(userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found")));
@@ -58,5 +63,13 @@ public class UserService {
 
     public void deleteUser(String userId) {
         userRepository.deleteById(userId);
+    }
+
+    public UserResponse getUserInfo() {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepository.findByUsername(name).orElseThrow(()
+                -> new AppException(ErrorCode.USER_NOT_EXIST));
+        return userMapper.toUserResponse(user);
     }
 }

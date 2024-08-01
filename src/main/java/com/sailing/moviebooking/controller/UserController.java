@@ -41,8 +41,10 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    UserResponse getUserById(@PathVariable("userId") String userId) {
-        return userService.getUserById(userId);
+    ApiResponse<UserResponse> getUserById(@PathVariable("userId") String userId) {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getUserById(userId))
+                .build();
     }
 
     @PutMapping("/{userId}")
@@ -55,5 +57,12 @@ public class UserController {
     String deleteUser(@PathVariable("userId") String userId) {
         userService.deleteUser(userId);
         return "User deleted";
+    }
+
+    @GetMapping("/myInfo")
+    ApiResponse<UserResponse> getUserInfo() {
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.getUserInfo())
+                .build();
     }
 }
