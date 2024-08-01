@@ -6,15 +6,16 @@ import com.sailing.moviebooking.dto.response.UserResponse;
 import com.sailing.moviebooking.exception.AppException;
 import com.sailing.moviebooking.exception.ErrorCode;
 import com.sailing.moviebooking.mapper.UserMapper;
+import com.sailing.moviebooking.model.RoleEnum;
 import com.sailing.moviebooking.model.User;
 import com.sailing.moviebooking.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -24,19 +25,23 @@ public class UserService {
 
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     public UserResponse createUser(UserCreationRequest userCreationRequest) {
         if (userRepository.existsByUsername(userCreationRequest.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
         User user = userMapper.toUser(userCreationRequest);
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
+        HashSet<String> roles = new HashSet<>();
+        roles.add(RoleEnum.USER.name());
+        user.setRoles(roles);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserResponse> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return userMapper.toUserResponse(users);
     }
 
     public UserResponse getUserById(String userId) {

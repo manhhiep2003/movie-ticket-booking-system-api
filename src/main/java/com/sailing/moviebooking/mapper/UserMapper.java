@@ -7,9 +7,12 @@ import com.sailing.moviebooking.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     User toUser(UserCreationRequest userCreationRequest);
     void updateUser(@MappingTarget User user, UserUpdateRequest userUpdateRequest);
     UserResponse toUserResponse(User user);
+    List<UserResponse> toUserResponse(List<User> users);
 }
