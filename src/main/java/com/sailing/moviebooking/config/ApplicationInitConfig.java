@@ -31,10 +31,10 @@ public class ApplicationInitConfig {
                 User user = User.builder()
                         .username("admin")
                         .roles(roles)
-                        .password(passwordEncoder.encode("12345"))
+                        .password(passwordEncoder.encode("12345678"))
                         .build();
                 userRepository.save(user);
-                log.warn("Admin account has been create with default password: 12345, please change it");
+                log.warn("Admin account has been create with default password: 12345678, please change it");
             }
         };
     }

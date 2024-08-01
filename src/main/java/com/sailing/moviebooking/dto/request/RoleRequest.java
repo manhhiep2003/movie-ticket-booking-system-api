@@ -1,21 +1,17 @@
-package com.sailing.moviebooking.model;
+package com.sailing.moviebooking.dto.request;
 
-import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.util.Set;
 
-@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class Role {
-    @Id
+public class RoleRequest {
     String roleName;
     String description;
-    @ManyToMany
-    Set<Permission> permissions;
+    Set<String> permissions;
 }
