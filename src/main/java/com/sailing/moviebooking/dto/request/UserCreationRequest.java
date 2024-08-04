@@ -1,5 +1,6 @@
 package com.sailing.moviebooking.dto.request;
 
+import com.sailing.moviebooking.validation.BirthdayValidation;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -27,6 +28,6 @@ public class UserCreationRequest {
     @Email
     String email;
 
+    @BirthdayValidation(min = 13, message = "INVALID_BIRTHDAY")
     LocalDate birthday;
-
 }
