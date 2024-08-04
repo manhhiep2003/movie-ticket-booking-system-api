@@ -36,15 +36,14 @@ public class UserController {
         var authentication = SecurityContextHolder.getContext().getAuthentication();
         log.info("Username: {}", authentication.getName());
         authentication.getAuthorities().forEach(grantedAuthority
-                -> log.info("GrantedAuthority: {}", grantedAuthority));
+                -> log.info("GrantedAuthority: {}", grantedAuthority.getAuthority()));
         return ApiResponse.<List<UserResponse>>builder().result(userService.getAllUsers()).build();
     }
 
     @GetMapping("/{userId}")
     ApiResponse<UserResponse> getUserById(@PathVariable("userId") String userId) {
         return ApiResponse.<UserResponse>builder()
-                .result(userService.getUserById(userId))
-                .build();
+                .result(userService.getUserById(userId)).build();
     }
 
     @PutMapping("/{userId}")
@@ -62,7 +61,6 @@ public class UserController {
     @GetMapping("/myInfo")
     ApiResponse<UserResponse> getUserInfo() {
         return ApiResponse.<UserResponse>builder()
-                .result(userService.getUserInfo())
-                .build();
+                .result(userService.getUserInfo()).build();
     }
 }

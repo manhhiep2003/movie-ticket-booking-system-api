@@ -1,5 +1,6 @@
 package com.sailing.moviebooking.dto.response;
 
+import com.sailing.moviebooking.model.Role;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -18,5 +19,5 @@ public class UserResponse {
     String lastName;
     String email;
     LocalDate birthday;
-    Set<String> roles;
+    Set<RoleResponse> roles;
 }

@@ -8,6 +8,7 @@ import com.sailing.moviebooking.exception.ErrorCode;
 import com.sailing.moviebooking.mapper.UserMapper;
 import com.sailing.moviebooking.model.RoleEnum;
 import com.sailing.moviebooking.model.User;
+import com.sailing.moviebooking.repository.RoleRepository;
 import com.sailing.moviebooking.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
     PasswordEncoder passwordEncoder;
+    RoleRepository roleRepository;
 
     public UserResponse createUser(UserCreationRequest userCreationRequest) {
         if (userRepository.existsByUsername(userCreationRequest.getUsername())) {
@@ -38,11 +40,11 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
         HashSet<String> roles = new HashSet<>();
         roles.add(RoleEnum.USER.name());
-        user.setRoles(roles);
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
+    //@PreAuthorize("hasAuthority('CREATE_MOVIE')")
     public List<UserResponse> getAllUsers() {
         List<User> users = userRepository.findAll();
         return userMapper.toUserResponse(users);
@@ -51,13 +53,16 @@ public class UserService {
     @PostAuthorize("returnObject.username == authentication.name")
     public UserResponse getUserById(String userId) {
         return userMapper.toUserResponse(userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found")));
+                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST)));
     }
 
     public UserResponse updateUser(UserUpdateRequest userUpdateRequest, String userId) {
         User user = userRepository.findById(userId).orElseThrow(()
-                -> new RuntimeException("User not found"));
+                -> new AppException(ErrorCode.USER_NOT_EXIST));
         userMapper.updateUser(user, userUpdateRequest);
+        user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
+        var roles = roleRepository.findAllById(userUpdateRequest.getRoles());
+        user.setRoles(new HashSet<>(roles));
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
