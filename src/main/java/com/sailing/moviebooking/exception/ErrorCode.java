@@ -13,8 +13,8 @@ public enum ErrorCode {
     INVALID_ERROR_KEY(1004, "Invalid message key.", HttpStatus.BAD_REQUEST),
     USER_NOT_EXIST(1005, "User does not exist.", HttpStatus.NOT_FOUND),
     UNAUTHENTICATED(1006,"Unauthenticated.", HttpStatus.UNAUTHORIZED),
-    UNAUTHORIZED(1007, "Unauthorized", HttpStatus.FORBIDDEN),
-    INVALID_BIRTHDAY(1008, "Invalid day of birth", HttpStatus.BAD_REQUEST)
+    UNAUTHORIZED(1007, "Unauthorized.", HttpStatus.FORBIDDEN),
+    INVALID_BIRTHDAY(1008, "Invalid day of birth.", HttpStatus.BAD_REQUEST)
     ;
 
     private int code;

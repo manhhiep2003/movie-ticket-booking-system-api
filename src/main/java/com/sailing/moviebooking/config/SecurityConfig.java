@@ -1,6 +1,7 @@
 package com.sailing.moviebooking.config;
 
 import lombok.experimental.NonFinal;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -24,11 +25,14 @@ import javax.crypto.spec.SecretKeySpec;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[] PUBLIC_ENDPOINTS = {"/users", "/auth/login", "/auth/introspect"};
+    private final String[] PUBLIC_ENDPOINTS = {
+            "/users",
+            "/auth/login",
+            "/auth/introspect",
+            "/auth/logout"};
 
-    @NonFinal
-    protected static final String SIGNER_KEY =
-            "CAmwQFLRD9c7Kr9eo11r+nl8HMpmYlgoHT/Lil2+aDZYu0vp/R0SejT+YsVQq7ew";
+    @Autowired
+    private CustomJwtDecoder customJwtDecoder;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -37,18 +41,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
                         //.requestMatchers(HttpMethod.GET, "/users").hasRole(RoleEnum.ADMIN.name())
                         .anyRequest().authenticated());
-        http.oauth2ResourceServer(oAuth2 -> oAuth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
+        http.oauth2ResourceServer(oAuth2 -> oAuth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
         http.csrf(AbstractHttpConfigurer::disable);
         return http.build();
-    }
-
-    @Bean
-    JwtDecoder jwtDecoder() {
-        SecretKeySpec secretKeySpec = new SecretKeySpec(SIGNER_KEY.getBytes(), "HS512");
-        return NimbusJwtDecoder.withSecretKey(secretKeySpec)
-                .macAlgorithm(MacAlgorithm.HS512).build();
     }
 
     @Bean

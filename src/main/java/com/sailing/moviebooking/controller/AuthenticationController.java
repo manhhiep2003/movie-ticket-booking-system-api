@@ -3,6 +3,7 @@ package com.sailing.moviebooking.controller;
 import com.nimbusds.jose.JOSEException;
 import com.sailing.moviebooking.dto.request.AuthenticationRequest;
 import com.sailing.moviebooking.dto.request.IntrospectRequest;
+import com.sailing.moviebooking.dto.request.LogoutRequest;
 import com.sailing.moviebooking.dto.response.ApiResponse;
 import com.sailing.moviebooking.dto.response.AuthenticationResponse;
 import com.sailing.moviebooking.dto.response.IntrospectResponse;
@@ -30,6 +31,14 @@ public class AuthenticationController {
         var result = authenticationService.authenticate(authenticationRequest);
         return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
+                .build();
+    }
+
+    @PostMapping("/logout")
+    ApiResponse<Void> logout(@RequestBody LogoutRequest logoutRequest)
+            throws ParseException, JOSEException {
+        authenticationService.logout(logoutRequest);
+        return ApiResponse.<Void>builder()
                 .build();
     }
 
