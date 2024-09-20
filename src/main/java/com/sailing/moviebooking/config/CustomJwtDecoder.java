@@ -5,6 +5,7 @@ import com.sailing.moviebooking.dto.request.IntrospectRequest;
 import com.sailing.moviebooking.service.AuthenticationService;
 import lombok.experimental.NonFinal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -20,8 +21,8 @@ import java.util.Objects;
 public class CustomJwtDecoder implements JwtDecoder {
 
     @NonFinal
-    protected static final String SIGNER_KEY =
-            "CAmwQFLRD9c7Kr9eo11r+nl8HMpmYlgoHT/Lil2+aDZYu0vp/R0SejT+YsVQq7ew";
+    @Value("${signer-key}")
+    protected String SIGNER_KEY;
 
     @Autowired
     private AuthenticationService authenticationService;
