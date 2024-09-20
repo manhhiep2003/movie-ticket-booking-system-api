@@ -4,6 +4,7 @@ import com.nimbusds.jose.JOSEException;
 import com.sailing.moviebooking.dto.request.AuthenticationRequest;
 import com.sailing.moviebooking.dto.request.IntrospectRequest;
 import com.sailing.moviebooking.dto.request.LogoutRequest;
+import com.sailing.moviebooking.dto.request.RefreshTokenRequest;
 import com.sailing.moviebooking.dto.response.ApiResponse;
 import com.sailing.moviebooking.dto.response.AuthenticationResponse;
 import com.sailing.moviebooking.dto.response.IntrospectResponse;
@@ -29,25 +30,27 @@ public class AuthenticationController {
     @PostMapping("/login")
     ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest authenticationRequest) {
         var result = authenticationService.authenticate(authenticationRequest);
-        return ApiResponse.<AuthenticationResponse>builder()
-                .result(result)
-                .build();
+        return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
 
     @PostMapping("/logout")
     ApiResponse<Void> logout(@RequestBody LogoutRequest logoutRequest)
             throws ParseException, JOSEException {
         authenticationService.logout(logoutRequest);
-        return ApiResponse.<Void>builder()
-                .build();
+        return ApiResponse.<Void>builder().build();
     }
 
     @PostMapping("/introspect")
     ApiResponse<IntrospectResponse> introspect(@RequestBody IntrospectRequest introspectRequest)
             throws ParseException, JOSEException {
         var result = authenticationService.introspect(introspectRequest);
-        return ApiResponse.<IntrospectResponse>builder()
-                .result(result)
-                .build();
+        return ApiResponse.<IntrospectResponse>builder().result(result).build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> refresh(@RequestBody RefreshTokenRequest refreshTokenRequest)
+             throws ParseException, JOSEException {
+        var result = authenticationService.refreshToken(refreshTokenRequest);
+        return ApiResponse.<AuthenticationResponse>builder().result(result).build();
     }
 }
