@@ -21,7 +21,7 @@ import java.util.Objects;
 public class CustomJwtDecoder implements JwtDecoder {
 
     @NonFinal
-    @Value("${signer-key}")
+    @Value("${jwt.signer-key}")
     protected String SIGNER_KEY;
 
     @Autowired

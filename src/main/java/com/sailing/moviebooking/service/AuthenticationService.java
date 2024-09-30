@@ -45,18 +45,19 @@ public class AuthenticationService {
     InvalidatedTokenRepository invalidatedTokenRepository;
 
     @NonFinal
-    @Value("${signer-key}")
+    @Value("${jwt.signer-key}")
     protected String SIGNER_KEY;
 
     @NonFinal
-    @Value("${valid-duration}")
+    @Value("${jwt.valid-duration}")
     protected long VALID_DURATION;
 
     @NonFinal
-    @Value("${refreshable-duration}")
+    @Value("${jwt.refreshable-duration}")
     protected long REFRESHABLE_DURATION;
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
+        log.info("SignKey: {}", SIGNER_KEY);
         var user = userRepository.findByUsername(authenticationRequest.getUsername())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST));
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
