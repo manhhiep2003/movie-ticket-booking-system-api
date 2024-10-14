@@ -108,7 +108,8 @@ public class AuthenticationService {
                         .lastName(userInfo.getFamilyName())
                         .roles(roles)
                 .build()));
-        return AuthenticationResponse.builder().token(response.getAccessToken()).build();
+        var token = generateToken(user);
+        return AuthenticationResponse.builder().token(token).build();
     }
 
     private String generateToken(User user) {
