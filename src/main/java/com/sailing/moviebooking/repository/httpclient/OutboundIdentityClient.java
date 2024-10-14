@@ -1,4 +1,4 @@
-package com.sailing.moviebooking.repository;
+package com.sailing.moviebooking.repository.httpclient;
 
 import com.sailing.moviebooking.dto.request.ExchangeTokenRequest;
 import com.sailing.moviebooking.dto.response.ExchangeTokenResponse;

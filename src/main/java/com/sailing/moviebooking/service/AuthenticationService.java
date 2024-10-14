@@ -4,16 +4,19 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
+import com.sailing.moviebooking.constant.PredefinedRole;
 import com.sailing.moviebooking.dto.request.*;
 import com.sailing.moviebooking.dto.response.AuthenticationResponse;
 import com.sailing.moviebooking.dto.response.IntrospectResponse;
 import com.sailing.moviebooking.exception.AppException;
 import com.sailing.moviebooking.exception.ErrorCode;
 import com.sailing.moviebooking.model.InvalidatedToken;
+import com.sailing.moviebooking.model.Role;
 import com.sailing.moviebooking.model.User;
 import com.sailing.moviebooking.repository.InvalidatedTokenRepository;
-import com.sailing.moviebooking.repository.OutboundIdentityClient;
+import com.sailing.moviebooking.repository.httpclient.OutboundIdentityClient;
 import com.sailing.moviebooking.repository.UserRepository;
+import com.sailing.moviebooking.repository.httpclient.OutboundUserClient;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -29,9 +32,7 @@ import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +43,7 @@ public class AuthenticationService {
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
     OutboundIdentityClient outboundIdentityClient;
+    OutboundUserClient outboundUserClient;
 
     @NonFinal
     @Value("${jwt.signer-key}")
@@ -95,6 +97,17 @@ public class AuthenticationService {
                         .grantType(GRANT_TYPE)
                 .build());
         log.info("Token response: {}", response);
+        var userInfo = outboundUserClient.getUserInfo("json", response.getAccessToken());
+        log.info("User info: {}", userInfo);
+        Set<Role> roles = new HashSet<>();
+        roles.add(Role.builder().roleName(PredefinedRole.USER_ROLE).build());
+        var user = userRepository.findByUsername(userInfo.getEmail()).orElseGet(()
+                -> userRepository.save(User.builder()
+                        .username(userInfo.getEmail())
+                        .firstName(userInfo.getGivenName())
+                        .lastName(userInfo.getFamilyName())
+                        .roles(roles)
+                .build()));
         return AuthenticationResponse.builder().token(response.getAccessToken()).build();
     }
 

@@ -1,19 +1,19 @@
 package com.sailing.moviebooking.service;
 
+import com.sailing.moviebooking.constant.PredefinedRole;
 import com.sailing.moviebooking.dto.request.UserCreationRequest;
 import com.sailing.moviebooking.dto.request.UserUpdateRequest;
 import com.sailing.moviebooking.dto.response.UserResponse;
 import com.sailing.moviebooking.exception.AppException;
 import com.sailing.moviebooking.exception.ErrorCode;
 import com.sailing.moviebooking.mapper.UserMapper;
-import com.sailing.moviebooking.model.RoleEnum;
+import com.sailing.moviebooking.model.Role;
 import com.sailing.moviebooking.model.User;
 import com.sailing.moviebooking.repository.RoleRepository;
 import com.sailing.moviebooking.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,15 +34,14 @@ public class UserService {
     RoleRepository roleRepository;
 
     public UserResponse createUser(UserCreationRequest userCreationRequest) {
-        User user = userMapper.toUser(userCreationRequest);
-        user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
-        HashSet<String> roles = new HashSet<>();
-        roles.add(RoleEnum.USER.name());
-        try {
-            user = userRepository.save(user);
-        } catch (DataIntegrityViolationException dataIntegrityViolationException) {
+        if (userRepository.existsByUsername(userCreationRequest.getUsername())) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
+        User user = userMapper.toUser(userCreationRequest);
+        user.setPassword(passwordEncoder.encode(userCreationRequest.getPassword()));
+        HashSet<Role> roles = new HashSet<>();
+        roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
+        user.setRoles(roles);
         return userMapper.toUserResponse(user);
     }
 
@@ -59,16 +58,17 @@ public class UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST)));
     }
 
-    public UserResponse updateUser(UserUpdateRequest userUpdateRequest, String userId) {
-        User user = userRepository.findById(userId).orElseThrow(()
-                -> new AppException(ErrorCode.USER_NOT_EXIST));
-        userMapper.updateUser(user, userUpdateRequest);
-        user.setPassword(passwordEncoder.encode(userUpdateRequest.getPassword()));
-        var roles = roleRepository.findAllById(userUpdateRequest.getRoles());
+    @PostAuthorize("returnObject.username == authentication.name")
+    public UserResponse updateUser(String userId, UserUpdateRequest request) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXIST));
+        userMapper.updateUser(user, request);
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        var roles = roleRepository.findAllById(request.getRoles());
         user.setRoles(new HashSet<>(roles));
         return userMapper.toUserResponse(userRepository.save(user));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteUser(String userId) {
         userRepository.deleteById(userId);
     }
