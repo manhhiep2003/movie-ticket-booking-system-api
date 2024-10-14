@@ -4,10 +4,7 @@ import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.SignedJWT;
-import com.sailing.moviebooking.dto.request.AuthenticationRequest;
-import com.sailing.moviebooking.dto.request.IntrospectRequest;
-import com.sailing.moviebooking.dto.request.LogoutRequest;
-import com.sailing.moviebooking.dto.request.RefreshTokenRequest;
+import com.sailing.moviebooking.dto.request.*;
 import com.sailing.moviebooking.dto.response.AuthenticationResponse;
 import com.sailing.moviebooking.dto.response.IntrospectResponse;
 import com.sailing.moviebooking.exception.AppException;
@@ -15,6 +12,7 @@ import com.sailing.moviebooking.exception.ErrorCode;
 import com.sailing.moviebooking.model.InvalidatedToken;
 import com.sailing.moviebooking.model.User;
 import com.sailing.moviebooking.repository.InvalidatedTokenRepository;
+import com.sailing.moviebooking.repository.OutboundIdentityClient;
 import com.sailing.moviebooking.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +41,7 @@ public class AuthenticationService {
 
     UserRepository userRepository;
     InvalidatedTokenRepository invalidatedTokenRepository;
+    OutboundIdentityClient outboundIdentityClient;
 
     @NonFinal
     @Value("${jwt.signer-key}")
@@ -55,6 +54,21 @@ public class AuthenticationService {
     @NonFinal
     @Value("${jwt.refreshable-duration}")
     protected long REFRESHABLE_DURATION;
+
+    @NonFinal
+    @Value("${outbound.client-id}")
+    protected String CLIENT_ID;
+
+    @NonFinal
+    @Value("${outbound.client-secret}")
+    protected String CLIENT_SECRET;
+
+    @NonFinal
+    @Value("${outbound.redirect-uri}")
+    protected String REDIRECT_URI;
+
+    @NonFinal
+    protected final String GRANT_TYPE = "authorization_code";
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         log.info("SignKey: {}", SIGNER_KEY);
@@ -69,6 +83,19 @@ public class AuthenticationService {
         var token = generateToken(user);
         return AuthenticationResponse.builder()
                 .token(token).authenticated(true).build();
+    }
+
+    public AuthenticationResponse outboundAuthenticate(String code) {
+        var response = outboundIdentityClient.exchangeToken(
+                ExchangeTokenRequest.builder()
+                        .code(code)
+                        .clientId(CLIENT_ID)
+                        .clientSecret(CLIENT_SECRET)
+                        .redirectUri(REDIRECT_URI)
+                        .grantType(GRANT_TYPE)
+                .build());
+        log.info("Token response: {}", response);
+        return AuthenticationResponse.builder().token(response.getAccessToken()).build();
     }
 
     private String generateToken(User user) {
