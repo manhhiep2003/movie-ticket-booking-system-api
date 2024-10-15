@@ -1,5 +1,6 @@
 package com.sailing.moviebooking.controller;
 
+import com.sailing.moviebooking.dto.request.PasswordCreationRequest;
 import com.sailing.moviebooking.dto.request.UserCreationRequest;
 import com.sailing.moviebooking.dto.request.UserUpdateRequest;
 import com.sailing.moviebooking.dto.response.ApiResponse;
@@ -29,6 +30,12 @@ public class UserController {
         ApiResponse<UserResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(userService.createUser(userCreationRequest));
         return apiResponse;
+    }
+
+    @PostMapping("/create-password")
+    ApiResponse<Void> createPassword(@RequestBody @Valid PasswordCreationRequest passwordCreationRequest) {
+        userService.createPassword(passwordCreationRequest);
+        return ApiResponse.<Void>builder().message("Password has been created.").build();
     }
 
     @GetMapping

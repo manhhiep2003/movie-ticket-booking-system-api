@@ -1,6 +1,7 @@
 package com.sailing.moviebooking.service;
 
 import com.sailing.moviebooking.constant.PredefinedRole;
+import com.sailing.moviebooking.dto.request.PasswordCreationRequest;
 import com.sailing.moviebooking.dto.request.UserCreationRequest;
 import com.sailing.moviebooking.dto.request.UserUpdateRequest;
 import com.sailing.moviebooking.dto.response.UserResponse;
@@ -19,6 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 
 import java.util.HashSet;
 import java.util.List;
@@ -43,6 +45,18 @@ public class UserService {
         roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
         user.setRoles(roles);
         return userMapper.toUserResponse(userRepository.save(user));
+    }
+
+    public void createPassword(PasswordCreationRequest passwordCreationRequest) {
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+        User user = userRepository.findByUsername(name).orElseThrow(()
+                -> new AppException(ErrorCode.USER_NOT_EXIST));
+        if (StringUtils.hasText(user.getPassword())) {
+            throw new AppException(ErrorCode.PASSWORD_EXISTED);
+        }
+        user.setPassword(passwordEncoder.encode(passwordCreationRequest.getPassword()));
+        userRepository.save(user);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -78,6 +92,8 @@ public class UserService {
         String name = context.getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(()
                 -> new AppException(ErrorCode.USER_NOT_EXIST));
-        return userMapper.toUserResponse(user);
+        var userResponse = userMapper.toUserResponse(user);
+        userResponse.setHasPassword(StringUtils.hasText(user.getPassword()));
+        return userResponse;
     }
 }
