@@ -28,7 +28,9 @@ public class SecurityConfig {
             "/auth/introspect",
             "/auth/logout",
             "/auth/refresh",
-            "/auth/outbound/authentication"
+            "/auth/outbound/authentication",
+            "/movies",
+            "/cinemas"
     };
 
     @Autowired
@@ -39,7 +41,6 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry ->
                 authorizationManagerRequestMatcherRegistry
                         .requestMatchers(HttpMethod.POST, PUBLIC_ENDPOINTS).permitAll()
-                        //.requestMatchers(HttpMethod.GET, "/users").hasRole(RoleEnum.ADMIN.name())
                         .anyRequest().authenticated());
         http.oauth2ResourceServer(oAuth2 -> oAuth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(customJwtDecoder)
                 .jwtAuthenticationConverter(jwtAuthenticationConverter()))
