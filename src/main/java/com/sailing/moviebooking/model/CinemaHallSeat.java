@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
+
 @Entity
 @Data
 @NoArgsConstructor
@@ -22,4 +24,7 @@ public class CinemaHallSeat {
     @ManyToOne
     @JoinColumn(name = "cinema_hall_id")
     CinemaHall cinemaHall;
+
+    @OneToMany(mappedBy = "cinemaHallSeat")
+    List<ShowSeat> showSeats;
 }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -18,4 +19,6 @@ public class Role {
     String description;
     @ManyToMany
     Set<Permission> permissions;
+    @ManyToMany
+    List<User> users;
 }

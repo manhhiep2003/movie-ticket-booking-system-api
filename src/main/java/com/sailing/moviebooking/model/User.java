@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,6 +25,23 @@ public class User {
     String lastName;
     String email;
     LocalDate birthday;
+
     @ManyToMany
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_name")
+    )
     Set<Role> roles;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_show_seat",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "show_seat_id")
+    )
+    List<ShowSeat> showSeats;
+
+    @OneToMany(mappedBy = "user")
+    List<Booking> bookings;
 }

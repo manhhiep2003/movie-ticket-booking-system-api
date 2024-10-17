@@ -17,4 +17,12 @@ public class ShowSeat {
     int seatNumber;
     boolean isReverse;
     double price;
+
+    @ManyToOne
+    @JoinColumn(name = "show_id", nullable = false)
+    CinemaHallSeat cinemaHallSeat;
+
+    @ManyToOne
+    @JoinColumn(name = "movie_show_id", nullable = false)
+    MovieShow movieShow;
 }

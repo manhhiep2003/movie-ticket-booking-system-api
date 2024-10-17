@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Data
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 public class MovieShow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long showId;
+    Long movieShowId;
     LocalDate creationDate;
     LocalDate startTime;
     LocalDate endTime;
@@ -23,4 +24,10 @@ public class MovieShow {
     @ManyToOne
     @JoinColumn(name = "title")
     Movie movie;
+
+    @OneToMany(mappedBy = "movieShow")
+    List<Booking> bookings;
+
+    @OneToMany(mappedBy = "movieShow")
+    List<ShowSeat> showSeats;
 }
