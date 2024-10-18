@@ -6,6 +6,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Data
@@ -28,4 +29,12 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "userId")
     User user;
+
+    @ManyToMany
+    @JoinTable(
+            name = "booking_seat",
+            joinColumns = @JoinColumn(name = "booking_number"),
+            inverseJoinColumns = @JoinColumn(name = "seat_id")
+    )
+    List<Seat> seats;
 }

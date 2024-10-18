@@ -14,4 +14,5 @@ public class MovieShowResponse {
     LocalDate creationDate;
     LocalDate startTime;
     LocalDate endTime;
+    String title;
 }

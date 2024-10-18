@@ -14,4 +14,5 @@ public class MovieShowCreationRequest {
     LocalDate creationDate;
     LocalDate startTime;
     LocalDate endTime;
+    String title;
 }

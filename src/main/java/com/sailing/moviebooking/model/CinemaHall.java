@@ -23,5 +23,5 @@ public class CinemaHall {
     Cinema cinema;
 
     @OneToMany(mappedBy = "cinemaHall")
-    List<CinemaHallSeat> cinemaHallSeats;
+    List<MovieShow> movieShows;
 }

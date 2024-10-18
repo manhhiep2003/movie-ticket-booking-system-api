@@ -30,7 +30,8 @@ public class SecurityConfig {
             "/auth/refresh",
             "/auth/outbound/authentication",
             "/movies",
-            "/cinemas"
+            "/cinemas",
+            "/booking"
     };
 
     @Autowired

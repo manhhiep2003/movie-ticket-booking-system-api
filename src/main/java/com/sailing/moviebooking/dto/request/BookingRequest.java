@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BookingRequest {
-    Long showId;
+    Long movieShowId;
     String userId;
-    List<Integer> showSeatId;
+    List<Integer> seatId;
 }

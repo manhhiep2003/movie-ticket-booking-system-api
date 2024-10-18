@@ -36,11 +36,11 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-            name = "user_show_seat",
+            name = "user_seat",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "show_seat_id")
+            inverseJoinColumns = @JoinColumn(name = "seat_id")
     )
-    List<ShowSeat> showSeats;
+    List<Seat> seats;
 
     @OneToMany(mappedBy = "user")
     List<Booking> bookings;

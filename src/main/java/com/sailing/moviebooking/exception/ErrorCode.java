@@ -15,7 +15,7 @@ public enum ErrorCode {
     UNAUTHENTICATED(1006,"Unauthenticated.", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "Unauthorized.", HttpStatus.FORBIDDEN),
     INVALID_BIRTHDAY(1008, "Invalid day of birth.", HttpStatus.BAD_REQUEST),
-    PASSWORD_EXISTED(1009, "Password existed.", HttpStatus.BAD_REQUEST)
+    PASSWORD_EXISTED(1009, "Password existed.", HttpStatus.BAD_REQUEST),
     ;
 
     private int code;

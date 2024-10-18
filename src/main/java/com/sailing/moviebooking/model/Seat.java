@@ -1,5 +1,6 @@
 package com.sailing.moviebooking.model;
 
+import com.sailing.moviebooking.constant.SeatType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,17 +11,13 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ShowSeat {
+public class Seat {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int showSeatId;
-    int seatNumber;
+    int seatId;
     boolean isReverse;
     double price;
-
-    @ManyToOne
-    @JoinColumn(name = "show_id", nullable = false)
-    CinemaHallSeat cinemaHallSeat;
+    SeatType type;
 
     @ManyToOne
     @JoinColumn(name = "movie_show_id", nullable = false)

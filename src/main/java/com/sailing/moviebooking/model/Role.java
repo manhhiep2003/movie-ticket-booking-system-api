@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -17,8 +16,12 @@ public class Role {
     @Id
     String roleName;
     String description;
+
     @ManyToMany
+    @JoinTable(
+            name = "role_permission",
+            joinColumns = @JoinColumn(name = "role_name"),
+            inverseJoinColumns = @JoinColumn(name = "permission_name")
+    )
     Set<Permission> permissions;
-    @ManyToMany
-    List<User> users;
 }

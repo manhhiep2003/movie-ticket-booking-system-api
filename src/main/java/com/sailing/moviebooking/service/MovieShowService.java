@@ -3,7 +3,6 @@ package com.sailing.moviebooking.service;
 import com.sailing.moviebooking.dto.request.MovieShowCreationRequest;
 import com.sailing.moviebooking.dto.response.MovieShowResponse;
 import com.sailing.moviebooking.mapper.MovieShowMapper;
-import com.sailing.moviebooking.model.MovieShow;
 import com.sailing.moviebooking.repository.MovieShowRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ public class MovieShowService {
     MovieShowMapper movieShowMapper;
 
     public MovieShowResponse addMovieShow(MovieShowCreationRequest movieShowCreationRequest) {
-        MovieShow movieShow = movieShowMapper.toMovieShow(movieShowCreationRequest);
+        var movieShow = movieShowMapper.toMovieShow(movieShowCreationRequest);
         return movieShowMapper.toMovieShowResponse(movieShowRepository.save(movieShow));
     }
 }

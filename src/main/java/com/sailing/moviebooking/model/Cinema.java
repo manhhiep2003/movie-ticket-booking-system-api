@@ -24,4 +24,7 @@ public class Cinema {
     @ManyToOne
     @JoinColumn(name = "cityName")
     City city;
+
+    @OneToMany(mappedBy = "cinema")
+    List<MovieShow> movieShows;
 }

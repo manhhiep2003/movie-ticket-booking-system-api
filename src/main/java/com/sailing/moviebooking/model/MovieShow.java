@@ -29,5 +29,13 @@ public class MovieShow {
     List<Booking> bookings;
 
     @OneToMany(mappedBy = "movieShow")
-    List<ShowSeat> showSeats;
+    List<Seat> seats;
+
+    @ManyToOne
+    @JoinColumn(name = "cinema_name")
+    Cinema cinema;
+
+    @ManyToOne
+    @JoinColumn(name = "cinema_hall_id")
+    CinemaHall cinemaHall;
 }
